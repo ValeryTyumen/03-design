@@ -50,17 +50,17 @@ namespace battleships
 				}
 			}
 			ai.Dispose();
-			WriteTotal(ai, shots, crashes, badShots, gamesPlayed);
+			WriteTotal(ai.Name, shots, crashes, badShots, gamesPlayed);
 		}
 
-		private void RunGameToEnd(Game game, GameVisualizer vis)
+		private void RunGameToEnd(Game game, GameVisualizer visualizer)
 		{
 			while (!game.IsOver())
 			{
 				game.MakeStep();
 				if (settings.Interactive)
 				{
-					vis.Visualize(game);
+					visualizer.Visualize(game);
 					if (game.AiCrashed)
 						Console.WriteLine(game.LastError.Message);
 					Console.ReadKey();
@@ -68,7 +68,7 @@ namespace battleships
 			}
 		}
 
-		private void WriteTotal(Ai ai, List<int> shots, int crashes, int badShots, int gamesPlayed)
+		private void WriteTotal(string aiName, List<int> shots, int crashes, int badShots, int gamesPlayed)
 		{
 			if (shots.Count == 0) shots.Add(1000 * 1000);
 			shots.Sort();
@@ -80,7 +80,7 @@ namespace battleships
 			var efficiencyScore = 100.0 * (settings.Width * settings.Height - mean) / (settings.Width * settings.Height);
 			var score = efficiencyScore - crashPenalty - badFraction;
 			var headers = FormatTableRow(new object[] { "AiName", "Mean", "Sigma", "Median", "Crashes", "Bad%", "Games", "Score" });
-			var message = FormatTableRow(new object[] { ai.Name, mean, sigma, median, crashes, badFraction, gamesPlayed, score });
+			var message = FormatTableRow(new object[] { aiName, mean, sigma, median, crashes, badFraction, gamesPlayed, score });
 			resultsLog.Info(message);
 			Console.WriteLine();
 			Console.WriteLine("Score statistics");
