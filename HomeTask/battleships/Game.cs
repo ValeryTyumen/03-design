@@ -67,7 +67,7 @@ namespace battleships
 			}
 		}
 
-	    public void Repair()
+	    public void RepairAi()
 	    {
             LastTarget = null;
 	    }

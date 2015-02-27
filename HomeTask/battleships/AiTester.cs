@@ -10,17 +10,15 @@ namespace battleships
         private readonly Settings _settings;
         private readonly MapGenerator _generator;
         private readonly GameVisualizer _visualizer;
-        private readonly ProcessMonitor _monitor;
-        private Ai _ai;
+        private readonly Ai _ai;
 
         public static event Action<string> Log;
 
         public AiTester(Settings settings, MapGenerator generator, 
-            GameVisualizer visualizer, ProcessMonitor monitor, Ai ai)
+            GameVisualizer visualizer, Ai ai)
         {
             _settings = settings;
             _generator = generator;
-            _monitor = monitor;
             _visualizer = visualizer;
             _ai = ai;
         }
@@ -42,8 +40,7 @@ namespace battleships
                 {
                     crashes++;
                     if (crashes > _settings.CrashLimit) break;
-                    //_ai = new Ai(aiSource, _monitor);
-                    game.Repair();
+                    game.RepairAi();
                 }
                 else
                     shots.Add(game.TurnsCount);
