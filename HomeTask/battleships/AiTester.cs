@@ -15,9 +15,7 @@ namespace battleships
 			this.settings = settings;
 		}
 
-	    private event Action<string> Info;
-
-		public void TestSingleFile(string aiPath, Logger logger)
+		public void TestSingleFile(string aiPath)
 		{
 			var generator = new MapGenerator(settings, new Random(settings.RandomSeed));
 			var visualizer = new GameVisualizer();

@@ -9,8 +9,6 @@ namespace battleships
 {
 	public class Program
 	{
-        private static readonly Logger resultsLog = LogManager.GetLogger("results");
-
 	    private static void Main(string[] args)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -23,7 +21,7 @@ namespace battleships
 			var settings = new Settings("settings.txt");
 			var tester = new AiTester(settings);
 			if (File.Exists(aiPath))
-				tester.TestSingleFile(aiPath, resultsLog);
+				tester.TestSingleFile(aiPath);
 			else
 				Console.WriteLine("No AI exe-file " + aiPath);
 		}
