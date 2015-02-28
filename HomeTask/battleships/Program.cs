@@ -3,12 +3,15 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using NLog;
 
 namespace battleships
 {
 	public class Program
 	{
-		private static void Main(string[] args)
+        private static readonly Logger resultsLog = LogManager.GetLogger("results");
+
+	    private static void Main(string[] args)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			if (args.Length == 0)
@@ -20,7 +23,7 @@ namespace battleships
 			var settings = new Settings("settings.txt");
 			var tester = new AiTester(settings);
 			if (File.Exists(aiPath))
-				tester.TestSingleFile(aiPath);
+				tester.TestSingleFile(aiPath, resultsLog);
 			else
 				Console.WriteLine("No AI exe-file " + aiPath);
 		}

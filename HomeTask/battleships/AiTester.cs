@@ -15,7 +15,9 @@ namespace battleships
 			this.settings = settings;
 		}
 
-		public void TestSingleFile(string aiPath)
+	    private event Action<string> Info;
+
+		public void TestSingleFile(string aiPath, Logger logger)
 		{
 			var generator = new MapGenerator(settings, new Random(settings.RandomSeed));
 			var visualizer = new GameVisualizer();
@@ -37,8 +39,7 @@ namespace battleships
 				{
 					crashes++;
 					if (crashes > settings.CrashLimit) break;
-					ai = new Ai(aiPath);
-                    ai.ProcessCreated += monitor.Register;
+				    game.RepairAi();
 				}
 				else
 					shots.Add(game.TurnsCount);
