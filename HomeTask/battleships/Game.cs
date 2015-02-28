@@ -72,7 +72,7 @@ namespace battleships
             LastTarget = null;
 	    }
 
-	    private bool IsBadShot(Vector target)
+		private bool IsBadShot(Vector target)
 		{
 			var cellWasHitAlready = Map[target] != MapCell.Empty && Map[target] != MapCell.Ship;
 			var cellIsNearDestroyedShip = Map.Near(target).Any(c => Map.shipsMap[c.X, c.Y] != null && !Map.shipsMap[c.X, c.Y].Alive);

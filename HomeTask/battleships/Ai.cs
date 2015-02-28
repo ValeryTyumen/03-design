@@ -21,7 +21,7 @@ namespace battleships
 
 		public string Name
 		{
-			get { return Path.GetFileNameWithoutExtension(exePath); } 
+			get { return Path.GetFileNameWithoutExtension(exePath); }
 		}
 
 		public Vector Init(int width, int height, int[] shipSizes)
