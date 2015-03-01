@@ -7,8 +7,9 @@ namespace battleships
 {
 	public class AiTester
 	{
-		private static readonly Logger resultsLog = LogManager.GetLogger("results");
 		private readonly Settings settings;
+
+		public event Action<string> Info;
 
 		public AiTester(Settings settings)
 		{
@@ -17,54 +18,14 @@ namespace battleships
 
 		public void TestSingleFile(string aiPath)
 		{
-			var generator = new MapGenerator(settings, new Random(settings.RandomSeed));
-			var visualizer = new GameVisualizer();
-			var monitor = new ProcessMonitor(TimeSpan.FromSeconds(settings.TimeLimitSeconds * settings.GamesCount), settings.MemoryLimit);
-			var badShots = 0;
-			var crashes = 0;
-			var gamesPlayed = 0;
-			var shots = new List<int>();
-			var ai = new Ai(aiPath);
-		    ai.ProcessCreated += monitor.Register;
-			for (var gameIndex = 0; gameIndex < settings.GamesCount; gameIndex++)
-			{
-				var map = generator.GenerateMap();
-				var game = new Game(map, ai);
-				RunGameToEnd(game, visualizer);
-				gamesPlayed++;
-				badShots += game.BadShots;
-				if (game.AiCrashed)
-				{
-					crashes++;
-					if (crashes > settings.CrashLimit) break;
-				    game.RepairAi();
-				}
-				else
-					shots.Add(game.TurnsCount);
-				if (settings.Verbose)
-				{
-					Console.WriteLine(
+			var sequance = new GameSequence(settings);
+			sequance.ProvideGameResult += result =>
+				Console.WriteLine(
 						"Game #{3,4}: Turns {0,4}, BadShots {1}{2}",
-						game.TurnsCount, game.BadShots, game.AiCrashed ? ", Crashed" : "", gameIndex);
-				}
-			}
-			ai.Dispose();
-			WriteTotal(ai.Name, shots, crashes, badShots, gamesPlayed);
-		}
-
-		private void RunGameToEnd(Game game, GameVisualizer visualizer)
-		{
-			while (!game.IsOver())
-			{
-				game.MakeStep();
-				if (settings.Interactive)
-				{
-					visualizer.Visualize(game);
-					if (game.AiCrashed)
-						Console.WriteLine(game.LastError.Message);
-					Console.ReadKey();
-				}
-			}
+						result.TurnsCount, result.BadShots, result.AiCrashed ? ", Crashed" : "", result.GameIndex);
+			sequance.ProvideSequanceResults += results =>
+				WriteTotal(results.AiName, results.Shots, results.Crashes, results.BadShots, results.GamesPlayed);
+			sequance.Run(aiPath);
 		}
 
 		private void WriteTotal(string aiName, List<int> shots, int crashes, int badShots, int gamesPlayed)
@@ -80,7 +41,7 @@ namespace battleships
 			var score = efficiencyScore - crashPenalty - badFraction;
 			var headers = FormatTableRow(new object[] { "AiName", "Mean", "Sigma", "Median", "Crashes", "Bad%", "Games", "Score" });
 			var message = FormatTableRow(new object[] { aiName, mean, sigma, median, crashes, badFraction, gamesPlayed, score });
-			resultsLog.Info(message);
+			Info(message);
 			Console.WriteLine();
 			Console.WriteLine("Score statistics");
 			Console.WriteLine("================");

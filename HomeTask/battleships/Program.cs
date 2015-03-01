@@ -9,6 +9,8 @@ namespace battleships
 {
 	public class Program
 	{
+		private static readonly Logger resultsLog = LogManager.GetLogger("results");
+
 	    private static void Main(string[] args)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -20,6 +22,7 @@ namespace battleships
 			var aiPath = args[0];
 			var settings = new Settings("settings.txt");
 			var tester = new AiTester(settings);
+		    tester.Info += resultsLog.Info;
 			if (File.Exists(aiPath))
 				tester.TestSingleFile(aiPath);
 			else
